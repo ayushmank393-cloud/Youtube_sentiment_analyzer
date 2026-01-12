@@ -1,4 +1,4 @@
-**YouTube Sentiment Analyzer**
+📊**YouTube Sentiment Analyzer**
 
 A Python-based web application to analyze and visualize sentiment of YouTube video comments.
 This project demonstrates API integration, NLP, and data visualization using Streamlit.
@@ -25,5 +25,6 @@ Pandas
 Matplotlib
 
 ⚙️**How to Run**
+
 
 -- Install dependencies
