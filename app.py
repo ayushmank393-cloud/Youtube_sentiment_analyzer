@@ -85,26 +85,41 @@ if analyze_btn:
 
         st.success("✅ Analysis Completed Successfully")
 
-        # ---------------- Bar Chart ----------------
-        st.markdown("## 📊 Sentiment Distribution (Bar Chart)")
+        # ---------------- Charts ----------------
+        st.markdown("## 📊 Sentiment Visualization")
 
         sentiment_df = pd.DataFrame({
             "Sentiment": list(results.keys()),
             "Count": list(results.values())
         })
 
-        fig, ax = plt.subplots()
-        ax.bar(
-            sentiment_df["Sentiment"],
-            sentiment_df["Count"],
-            color="#FFD700"
-        )
+        col1, col2 = st.columns(2)
 
-        ax.set_xlabel("Sentiment")
-        ax.set_ylabel("Number of Comments")
-        ax.set_title("Sentiment Analysis of YouTube Comments")
+        # -------- Bar Chart (Smaller) --------
+        with col1:
+            fig_bar, ax_bar = plt.subplots(figsize=(4, 3))
+            ax_bar.bar(
+                sentiment_df["Sentiment"],
+                sentiment_df["Count"],
+                color="#FFD700"
+            )
+            ax_bar.set_title("Bar Chart")
+            ax_bar.set_xlabel("Sentiment")
+            ax_bar.set_ylabel("Count")
+            st.pyplot(fig_bar)
 
-        st.pyplot(fig)
+        # -------- Pie Chart (Smaller) --------
+        with col2:
+            fig_pie, ax_pie = plt.subplots(figsize=(4, 3))
+            ax_pie.pie(
+                sentiment_df["Count"],
+                labels=sentiment_df["Sentiment"],
+                autopct="%1.1f%%",
+                startangle=90
+            )
+            ax_pie.set_title("Pie Chart")
+            ax_pie.axis("equal")
+            st.pyplot(fig_pie)
 
         # ---------------- Table ----------------
         st.markdown("## 📋 Sentiment Summary Table")
