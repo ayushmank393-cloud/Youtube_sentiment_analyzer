@@ -11,23 +11,62 @@ st.set_page_config(
     layout="wide"
 )
 
+# ---------------- Custom CSS ----------------
+st.markdown("""
+<style>
+.main-title {
+    font-size: 42px;
+    font-weight: 700;
+}
+.subtitle {
+    font-size: 18px;
+    color: #555;
+}
+.yellow-line {
+    width: 120px;
+    height: 4px;
+    background-color: #FFD700;
+    margin: 10px 0 25px 0;
+}
+.metric-box {
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+.footer {
+    text-align: center;
+    color: #777;
+    margin-top: 40px;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # ---------------- Sidebar ----------------
-st.sidebar.title("🎥 YouTube Sentiment Analyzer")
-st.sidebar.write("Analyze sentiment of YouTube comments")
+st.sidebar.markdown("## 🎥 YouTube Analyzer")
+st.sidebar.markdown("Analyze audience sentiment using **NLP**")
+st.sidebar.markdown("---")
 
-video_url = st.sidebar.text_input("🔗 Enter YouTube Video URL")
-max_comments = st.sidebar.slider("💬 Number of Comments", 20, 200, 100)
-analyze_btn = st.sidebar.button("🚀 Analyze")
+video_url = st.sidebar.text_input("🔗 YouTube Video URL")
+max_comments = st.sidebar.slider("💬 Number of comments", 20, 200, 100)
+analyze_btn = st.sidebar.button("🚀 Analyze Sentiment")
 
-# ---------------- Main UI ----------------
-st.title("📊 YouTube Sentiment Analyzer")
-st.write("This app analyzes **Positive, Neutral, and Negative** sentiment from YouTube comments using NLP.")
+# ---------------- Hero Section ----------------
+st.markdown('<div class="main-title">📊 YouTube Sentiment Analyzer</div>', unsafe_allow_html=True)
+st.markdown('<div class="yellow-line"></div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="subtitle">Understand what people really think by analyzing YouTube comments using Natural Language Processing.</div>',
+    unsafe_allow_html=True
+)
 
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ---------------- Analysis ----------------
 if analyze_btn:
     if video_url.strip() == "":
         st.error("❌ Please enter a valid YouTube URL")
     else:
-        with st.spinner("Fetching comments and analyzing sentiment..."):
+        with st.spinner("🔍 Fetching comments and analyzing sentiment..."):
             comments = get_comments(video_url, max_comments)
 
             results = {"Positive": 0, "Neutral": 0, "Negative": 0}
@@ -36,8 +75,7 @@ if analyze_btn:
                 "Neutral": [],
                 "Negative": []
             }
-
-            data = []  # for CSV
+            data = []
 
             for comment in comments:
                 cleaned = clean_text(comment)
@@ -51,16 +89,44 @@ if analyze_btn:
                     "Sentiment": sentiment
                 })
 
-        st.success("✅ Analysis Complete")
+        st.success("✅ Analysis Completed Successfully")
 
-        # ----------- Metrics -----------
-        col1, col2, col3 = st.columns(3)
-        col1.metric("😊 Positive", results["Positive"])
-        col2.metric("😐 Neutral", results["Neutral"])
-        col3.metric("😠 Negative", results["Negative"])
+        # ---------------- Metrics ----------------
+        st.markdown("## 📈 Sentiment Overview")
+        m1, m2, m3 = st.columns(3)
 
-        # ----------- Pie Chart -----------
-        st.subheader("📊 Sentiment Distribution")
+        with m1:
+            st.markdown(f"""
+            <div class="metric-box">
+                <h2>😊</h2>
+                <h3>{results['Positive']}</h3>
+                <p>Positive</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with m2:
+            st.markdown(f"""
+            <div class="metric-box">
+                <h2>😐</h2>
+                <h3>{results['Neutral']}</h3>
+                <p>Neutral</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with m3:
+            st.markdown(f"""
+            <div class="metric-box">
+                <h2>😠</h2>
+                <h3>{results['Negative']}</h3>
+                <p>Negative</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # ---------------- Pie Chart ----------------
+        st.markdown("## 🥧 Sentiment Distribution")
+
         fig, ax = plt.subplots()
         ax.pie(
             results.values(),
@@ -71,34 +137,37 @@ if analyze_btn:
         ax.axis("equal")
         st.pyplot(fig)
 
-        # ----------- Sample Comments -----------
-        st.subheader("💬 Sample Comments")
+        # ---------------- Comments ----------------
+        st.markdown("## 💬 Sample Comments")
+        t1, t2, t3 = st.tabs(["😊 Positive", "😐 Neutral", "😠 Negative"])
 
-        tab1, tab2, tab3 = st.tabs(["😊 Positive", "😐 Neutral", "😠 Negative"])
-
-        with tab1:
+        with t1:
             for c in categorized_comments["Positive"][:5]:
                 st.success(c)
 
-        with tab2:
+        with t2:
             for c in categorized_comments["Neutral"][:5]:
                 st.info(c)
 
-        with tab3:
+        with t3:
             for c in categorized_comments["Negative"][:5]:
                 st.error(c)
 
-        # ----------- Download CSV -----------
-        st.subheader("⬇️ Download Results")
+        # ---------------- Download ----------------
+        st.markdown("## ⬇️ Download Results")
         df = pd.DataFrame(data)
         csv = df.to_csv(index=False).encode("utf-8")
 
         st.download_button(
-            label="📥 Download CSV",
-            data=csv,
-            file_name="youtube_sentiment_results.csv",
-            mime="text/csv"
+            "📥 Download CSV",
+            csv,
+            "youtube_sentiment_results.csv",
+            "text/csv"
         )
 
-st.markdown("---")
-st.markdown("Built with ❤️ using **Python, NLP, and Streamlit**")
+# ---------------- Footer ----------------
+st.markdown("""
+<div class="footer">
+Built with ❤️ using <b>Python, NLP & Streamlit</b>
+</div>
+""", unsafe_allow_html=True)
