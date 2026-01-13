@@ -91,38 +91,25 @@ if analyze_btn:
 
         st.success("✅ Analysis Completed Successfully")
 
-        # ---------------- Metrics ----------------
-        st.markdown("## 📈 Sentiment Overview")
-        m1, m2, m3 = st.columns(3)
+       st.markdown("## 📊 Sentiment Distribution (Bar Chart)")
 
-        with m1:
-            st.markdown(f"""
-            <div class="metric-box">
-                <h2>😊</h2>
-                <h3>{results['Positive']}</h3>
-                <p>Positive</p>
-            </div>
-            """, unsafe_allow_html=True)
+sentiment_df = pd.DataFrame({
+    "Sentiment": list(results.keys()),
+    "Count": list(results.values())
+})
 
-        with m2:
-            st.markdown(f"""
-            <div class="metric-box">
-                <h2>😐</h2>
-                <h3>{results['Neutral']}</h3>
-                <p>Neutral</p>
-            </div>
-            """, unsafe_allow_html=True)
+fig, ax = plt.subplots()
+ax.bar(
+    sentiment_df["Sentiment"],
+    sentiment_df["Count"]
+)
 
-        with m3:
-            st.markdown(f"""
-            <div class="metric-box">
-                <h2>😠</h2>
-                <h3>{results['Negative']}</h3>
-                <p>Negative</p>
-            </div>
-            """, unsafe_allow_html=True)
+ax.set_xlabel("Sentiment")
+ax.set_ylabel("Number of Comments")
+ax.set_title("Sentiment Analysis of YouTube Comments")
 
-        st.markdown("<br>", unsafe_allow_html=True)
+st.pyplot(fig)
+
 
         # ---------------- Pie Chart ----------------
         st.markdown("## 🥧 Sentiment Distribution")
@@ -171,3 +158,4 @@ st.markdown("""
 Built with ❤️ using <b>Python, NLP & Streamlit</b>
 </div>
 """, unsafe_allow_html=True)
+
