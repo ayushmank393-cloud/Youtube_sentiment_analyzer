@@ -15,7 +15,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 .main-title {
-    font-size: 42px;
+    font-size: 40px;
     font-weight: 700;
 }
 .subtitle {
@@ -28,12 +28,6 @@ st.markdown("""
     background-color: #FFD700;
     margin: 10px 0 25px 0;
 }
-.metric-box {
-    padding: 20px;
-    border-radius: 12px;
-    background-color: #f8f9fa;
-    text-align: center;
-}
 .footer {
     text-align: center;
     color: #777;
@@ -43,19 +37,19 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- Sidebar ----------------
-st.sidebar.markdown("## 🎥 YouTube Analyzer")
-st.sidebar.markdown("Analyze audience sentiment using **NLP**")
+st.sidebar.markdown("## 🎥 YouTube Sentiment Analyzer")
+st.sidebar.markdown("Analyze YouTube comments using **NLP**")
 st.sidebar.markdown("---")
 
-video_url = st.sidebar.text_input("🔗 YouTube Video URL")
-max_comments = st.sidebar.slider("💬 Number of comments", 20, 200, 100)
+video_url = st.sidebar.text_input("🔗 Enter YouTube Video URL")
+max_comments = st.sidebar.slider("💬 Number of Comments", 20, 200, 100)
 analyze_btn = st.sidebar.button("🚀 Analyze Sentiment")
 
-# ---------------- Hero Section ----------------
+# ---------------- Header ----------------
 st.markdown('<div class="main-title">📊 YouTube Sentiment Analyzer</div>', unsafe_allow_html=True)
 st.markdown('<div class="yellow-line"></div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="subtitle">Understand what people really think by analyzing YouTube comments using Natural Language Processing.</div>',
+    '<div class="subtitle">This application analyzes YouTube comments for Positive, Neutral, and Negative sentiment.</div>',
     unsafe_allow_html=True
 )
 
@@ -91,71 +85,64 @@ if analyze_btn:
 
         st.success("✅ Analysis Completed Successfully")
 
-       st.markdown("## 📊 Sentiment Distribution (Bar Chart)")
+        # ---------------- Bar Chart ----------------
+        st.markdown("## 📊 Sentiment Distribution (Bar Chart)")
 
-sentiment_df = pd.DataFrame({
-    "Sentiment": list(results.keys()),
-    "Count": list(results.values())
-})
-
-fig, ax = plt.subplots()
-ax.bar(
-    sentiment_df["Sentiment"],
-    sentiment_df["Count"]
-)
-
-ax.set_xlabel("Sentiment")
-ax.set_ylabel("Number of Comments")
-ax.set_title("Sentiment Analysis of YouTube Comments")
-
-st.pyplot(fig)
-
-
-        # ---------------- Pie Chart ----------------
-        st.markdown("## 🥧 Sentiment Distribution")
+        sentiment_df = pd.DataFrame({
+            "Sentiment": list(results.keys()),
+            "Count": list(results.values())
+        })
 
         fig, ax = plt.subplots()
-        ax.pie(
-            results.values(),
-            labels=results.keys(),
-            autopct="%1.1f%%",
-            startangle=90
+        ax.bar(
+            sentiment_df["Sentiment"],
+            sentiment_df["Count"],
+            color="#FFD700"
         )
-        ax.axis("equal")
+
+        ax.set_xlabel("Sentiment")
+        ax.set_ylabel("Number of Comments")
+        ax.set_title("Sentiment Analysis of YouTube Comments")
+
         st.pyplot(fig)
 
-        # ---------------- Comments ----------------
-        st.markdown("## 💬 Sample Comments")
-        t1, t2, t3 = st.tabs(["😊 Positive", "😐 Neutral", "😠 Negative"])
+        # ---------------- Table ----------------
+        st.markdown("## 📋 Sentiment Summary Table")
+        st.dataframe(sentiment_df, use_container_width=True)
 
-        with t1:
+        # ---------------- Sample Comments ----------------
+        st.markdown("## 💬 Sample Comments")
+
+        tab1, tab2, tab3 = st.tabs(["😊 Positive", "😐 Neutral", "😠 Negative"])
+
+        with tab1:
             for c in categorized_comments["Positive"][:5]:
                 st.success(c)
 
-        with t2:
+        with tab2:
             for c in categorized_comments["Neutral"][:5]:
                 st.info(c)
 
-        with t3:
+        with tab3:
             for c in categorized_comments["Negative"][:5]:
                 st.error(c)
 
-        # ---------------- Download ----------------
+        # ---------------- Download CSV ----------------
         st.markdown("## ⬇️ Download Results")
+
         df = pd.DataFrame(data)
         csv = df.to_csv(index=False).encode("utf-8")
 
         st.download_button(
-            "📥 Download CSV",
-            csv,
-            "youtube_sentiment_results.csv",
-            "text/csv"
+            label="📥 Download CSV",
+            data=csv,
+            file_name="youtube_sentiment_results.csv",
+            mime="text/csv"
         )
 
 # ---------------- Footer ----------------
 st.markdown("""
 <div class="footer">
-Built with ❤️ using <b>Python, NLP & Streamlit</b>
+Built with ❤️ using <b>Python, NLP, and Streamlit</b>
 </div>
 """, unsafe_allow_html=True)
-
