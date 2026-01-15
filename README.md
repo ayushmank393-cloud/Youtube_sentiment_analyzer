@@ -1,30 +1,74 @@
-📊**YouTube Sentiment Analyzer**
+📊 YouTube Sentiment Analyzer
 
-A Python-based web application to analyze and visualize sentiment of YouTube video comments.
-This project demonstrates API integration, NLP, and data visualization using Streamlit.
+A Python-based web application that analyzes and visualizes the sentiment of YouTube video comments.
+This project demonstrates YouTube API integration, Natural Language Processing (NLP), and interactive data visualization using Streamlit.
 
---**Key Features**
+🚀 Features
 
-YouTube API Integration: Fetches real-time comments using YouTube Data API v3
+🔗 YouTube API Integration
+Fetches real-time comments using YouTube Data API v3
 
-Natural Language Processing: Classifies comments into Positive, Neutral, and Negative sentiments using VADER (NLTK)
+🧠 Sentiment Analysis (NLP)
+Classifies comments into Positive, Neutral, and Negative using VADER (NLTK)
 
-Interactive Dashboard: User-friendly UI built with Streamlit
+📊 Interactive Dashboard
+User-friendly interface built with Streamlit
 
-Visualization: Displays sentiment distribution using pie charts
+📈 Visualizations
+Displays sentiment distribution using bar charts and pie charts
 
-Data Export: Download analyzed results as a CSV file
+⬇️ CSV Export
+Download analyzed comments and sentiment results
 
---**Technologies Used**
+🛠️ Tech Stack
 
 Python
+
 Streamlit
+
 YouTube Data API v3
+
 NLTK (VADER Sentiment Analyzer)
+
+⚙️ Installation & Setup
+1️⃣ Clone the Repository
+git clone https://github.com/your-username/youtube-sentiment-analyzer.git
+cd youtube-sentiment-analyzer
+
+2️⃣ Create a Virtual Environment (Recommended)
+python -m venv venv
+source venv/bin/activate      # macOS / Linux
+venv\Scripts\activate         # Windows
+
+3️⃣ Install Dependencies
+pip install -r requirements.txt
+
+4️⃣ Download NLTK VADER Lexicon
+import nltk
+nltk.download('vader_lexicon')
+
+🔑 YouTube API Setup
+
+Go to Google Cloud Console
+
+Create a new project
+
+Enable YouTube Data API v3
+
+Generate an API key
+
+Set the API key as an environment variable:
+
+set YOUTUBE_API_KEY=your_api_key_here        # Windows
+export YOUTUBE_API_KEY=your_api_key_here     # macOS / Linux
+
+▶️ Run the Application
+streamlit run app.py
+
+
+Then open:
+http://localhost:8501
+
 Pandas
+
 Matplotlib
-
-⚙️**How to Run**
-
-
--- Install dependencies
