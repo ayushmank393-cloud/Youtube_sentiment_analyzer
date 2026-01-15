@@ -14,61 +14,88 @@ st.set_page_config(
 # ---------------- Custom CSS ----------------
 st.markdown("""
 <style>
-.main-title {
-    font-size: 40px;
-    font-weight: 700;
+body {
+    background-color: #f6f7fb;
 }
-.subtitle {
+
+.hero {
+    padding: 30px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #1f4037, #99f2c8);
+    color: white;
+    margin-bottom: 30px;
+}
+
+.hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+}
+
+.hero p {
     font-size: 18px;
-    color: #555;
+    opacity: 0.9;
 }
-.yellow-line {
-    width: 120px;
-    height: 4px;
-    background-color: #FFD700;
-    margin: 10px 0 25px 0;
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    margin-bottom: 25px;
 }
+
+.card-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
 .footer {
     text-align: center;
     color: #777;
     margin-top: 40px;
+    font-size: 14px;
+}
+
+.sidebar-title {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.highlight {
+    color: #1f4037;
+    font-weight: 700;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------- Sidebar ----------------
-st.sidebar.markdown("## 🎥 YouTube Sentiment Analyzer")
-st.sidebar.markdown("Analyze YouTube comments using **NLP**")
+st.sidebar.markdown('<div class="sidebar-title">🎥 YouTube Analyzer</div>', unsafe_allow_html=True)
+st.sidebar.markdown("Understand audience emotions using **AI-powered NLP**")
 st.sidebar.markdown("---")
 
-video_url = st.sidebar.text_input("🔗 Enter YouTube Video URL")
+video_url = st.sidebar.text_input("🔗 YouTube Video URL")
 max_comments = st.sidebar.slider("💬 Number of Comments", 20, 200, 100)
-analyze_btn = st.sidebar.button("🚀 Analyze Sentiment")
+analyze_btn = st.sidebar.button("🚀 Analyze Now")
 
-# ---------------- Header ----------------
-st.markdown('<div class="main-title">📊 YouTube Sentiment Analyzer</div>', unsafe_allow_html=True)
-st.markdown('<div class="yellow-line"></div>', unsafe_allow_html=True)
-st.markdown(
-    '<div class="subtitle">This application analyzes YouTube comments for Positive, Neutral, and Negative sentiment.</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown("<br>", unsafe_allow_html=True)
+# ---------------- Hero Header ----------------
+st.markdown("""
+<div class="hero">
+    <h1>📊 YouTube Sentiment Analyzer</h1>
+    <p>Analyze <b>Positive</b>, <b>Neutral</b>, and <b>Negative</b> emotions from YouTube comments using Natural Language Processing.</p>
+</div>
+""", unsafe_allow_html=True)
 
 # ---------------- Analysis ----------------
 if analyze_btn:
     if video_url.strip() == "":
         st.error("❌ Please enter a valid YouTube URL")
     else:
-        with st.spinner("🔍 Fetching comments and analyzing sentiment..."):
+        with st.spinner("🔍 Fetching comments & analyzing sentiment..."):
             comments = get_comments(video_url, max_comments)
 
             results = {"Positive": 0, "Neutral": 0, "Negative": 0}
-            categorized_comments = {
-                "Positive": [],
-                "Neutral": [],
-                "Negative": []
-            }
+            categorized_comments = {"Positive": [], "Neutral": [], "Negative": []}
             data = []
 
             for comment in comments:
@@ -85,8 +112,9 @@ if analyze_btn:
 
         st.success("✅ Analysis Completed Successfully")
 
-        # ---------------- Charts ----------------
-        st.markdown("## 📊 Sentiment Visualization")
+        # ---------------- Visualization Card ----------------
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title">📊 Sentiment Visualization</div>', unsafe_allow_html=True)
 
         sentiment_df = pd.DataFrame({
             "Sentiment": list(results.keys()),
@@ -95,38 +123,37 @@ if analyze_btn:
 
         col1, col2 = st.columns(2)
 
-        # -------- Bar Chart (Smaller) --------
         with col1:
-            fig_bar, ax_bar = plt.subplots(figsize=(4, 3))
-            ax_bar.bar(
-                sentiment_df["Sentiment"],
-                sentiment_df["Count"],
-                color="#FFD700"
-            )
-            ax_bar.set_title("Bar Chart")
+            fig_bar, ax_bar = plt.subplots(figsize=(4.5, 3.5))
+            ax_bar.bar(sentiment_df["Sentiment"], sentiment_df["Count"])
+            ax_bar.set_title("Sentiment Count")
             ax_bar.set_xlabel("Sentiment")
             ax_bar.set_ylabel("Count")
             st.pyplot(fig_bar)
 
-        # -------- Pie Chart (Smaller) --------
         with col2:
-            fig_pie, ax_pie = plt.subplots(figsize=(4, 3))
+            fig_pie, ax_pie = plt.subplots(figsize=(4.5, 3.5))
             ax_pie.pie(
                 sentiment_df["Count"],
                 labels=sentiment_df["Sentiment"],
                 autopct="%1.1f%%",
                 startangle=90
             )
-            ax_pie.set_title("Pie Chart")
+            ax_pie.set_title("Sentiment Distribution")
             ax_pie.axis("equal")
             st.pyplot(fig_pie)
 
-        # ---------------- Table ----------------
-        st.markdown("## 📋 Sentiment Summary Table")
-        st.dataframe(sentiment_df, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        # ---------------- Sample Comments ----------------
-        st.markdown("## 💬 Sample Comments")
+        # ---------------- Table Card ----------------
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title">📋 Sentiment Summary</div>', unsafe_allow_html=True)
+        st.dataframe(sentiment_df, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # ---------------- Comments Card ----------------
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title">💬 Sample Comments</div>', unsafe_allow_html=True)
 
         tab1, tab2, tab3 = st.tabs(["😊 Positive", "😐 Neutral", "😠 Negative"])
 
@@ -142,8 +169,11 @@ if analyze_btn:
             for c in categorized_comments["Negative"][:5]:
                 st.error(c)
 
-        # ---------------- Download CSV ----------------
-        st.markdown("## ⬇️ Download Results")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # ---------------- Download ----------------
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title">⬇️ Download Results</div>', unsafe_allow_html=True)
 
         df = pd.DataFrame(data)
         csv = df.to_csv(index=False).encode("utf-8")
@@ -155,9 +185,12 @@ if analyze_btn:
             mime="text/csv"
         )
 
+        st.markdown('</div>', unsafe_allow_html=True)
+
 # ---------------- Footer ----------------
 st.markdown("""
 <div class="footer">
-Built with ❤️ using <b>Python, NLP, and Streamlit</b>
+Built with ❤️ using <b>Python • NLP • Streamlit</b><br>
+Made for real-world sentiment insights
 </div>
 """, unsafe_allow_html=True)
