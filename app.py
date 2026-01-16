@@ -24,11 +24,13 @@ body {
     background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     color: white;
     margin-bottom: 30px;
+    text-align: center;
 }
 
 .hero h1 {
     font-size: 44px;
     font-weight: 800;
+    margin-bottom: 10px;
 }
 
 .hero p {
@@ -91,11 +93,11 @@ video_url = st.sidebar.text_input("🔗 YouTube Video URL")
 max_comments = st.sidebar.slider("💬 Number of Comments", 20, 200, 100)
 analyze_btn = st.sidebar.button("🚀 Analyze Now")
 
-# ---------------- Hero ----------------
+# ---------------- Hero Header (CENTERED) ----------------
 st.markdown("""
 <div class="hero">
     <h1>📊 YouTube Sentiment Analyzer</h1>
-    <p>Understand how people really feel about a video using <b>Natural Language Processing</b>.</p>
+    <p>Understand how people really feel about a video using Natural Language Processing.</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -118,30 +120,30 @@ if analyze_btn:
 
                 results[sentiment] += 1
                 categorized_comments[sentiment].append(comment)
-
                 data.append({"Comment": comment, "Sentiment": sentiment})
+
                 progress.progress((i + 1) / len(comments))
 
         st.success("✅ Analysis Completed Successfully")
 
         # ---------------- KPI CARDS ----------------
-        col1, col2, col3 = st.columns(3)
+        c1, c2, c3 = st.columns(3)
 
-        col1.markdown(f"""
+        c1.markdown(f"""
         <div class="kpi">
             <h2>😊 {results['Positive']}</h2>
             <p>Positive</p>
         </div>
         """, unsafe_allow_html=True)
 
-        col2.markdown(f"""
+        c2.markdown(f"""
         <div class="kpi">
             <h2>😐 {results['Neutral']}</h2>
             <p>Neutral</p>
         </div>
         """, unsafe_allow_html=True)
 
-        col3.markdown(f"""
+        c3.markdown(f"""
         <div class="kpi">
             <h2>😠 {results['Negative']}</h2>
             <p>Negative</p>
@@ -150,15 +152,14 @@ if analyze_btn:
 
         # ---------------- Overall Verdict ----------------
         overall = max(results, key=results.get)
-        verdict_msg = {
-            "Positive": "🎉 Audience reaction is mostly **Positive**!",
-            "Neutral": "🙂 Audience reaction is mostly **Neutral**.",
-            "Negative": "⚠️ Audience reaction is mostly **Negative**."
+        verdict = {
+            "Positive": "🎉 Overall audience sentiment is **Positive**",
+            "Neutral": "🙂 Overall audience sentiment is **Neutral**",
+            "Negative": "⚠️ Overall audience sentiment is **Negative**"
         }
+        st.info(verdict[overall])
 
-        st.info(verdict_msg[overall])
-
-        # ---------------- Charts ----------------
+        # ---------------- Visualization ----------------
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown('<div class="card-title">📊 Sentiment Visualization</div>', unsafe_allow_html=True)
 
@@ -167,18 +168,22 @@ if analyze_btn:
             "Count": results.values()
         })
 
-        c1, c2 = st.columns(2)
+        col1, col2 = st.columns(2)
 
-        with c1:
+        with col1:
             fig_bar, ax = plt.subplots(figsize=(4.5, 3.5))
             ax.bar(sentiment_df["Sentiment"], sentiment_df["Count"])
             ax.set_title("Sentiment Count")
             st.pyplot(fig_bar)
 
-        with c2:
+        with col2:
             fig_pie, ax2 = plt.subplots(figsize=(4.5, 3.5))
-            ax2.pie(sentiment_df["Count"], labels=sentiment_df["Sentiment"],
-                    autopct="%1.1f%%", startangle=90)
+            ax2.pie(
+                sentiment_df["Count"],
+                labels=sentiment_df["Sentiment"],
+                autopct="%1.1f%%",
+                startangle=90
+            )
             ax2.axis("equal")
             st.pyplot(fig_pie)
 
