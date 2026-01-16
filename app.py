@@ -85,8 +85,8 @@ body {
 """, unsafe_allow_html=True)
 
 # ---------------- Sidebar ----------------
-st.sidebar.markdown('<div class="sidebar-title">🎥 YouTube Analyzer</div>', unsafe_allow_html=True)
-st.sidebar.markdown("Analyze audience emotions using **AI-powered NLP**")
+st.sidebar.markdown('<div class="sidebar-title"> YouTube Analyzer</div>', unsafe_allow_html=True)
+
 st.sidebar.markdown("---")
 
 video_url = st.sidebar.text_input("🔗 YouTube Video URL")
