@@ -15,20 +15,20 @@ st.set_page_config(
 st.markdown("""
 <style>
 body {
-    background-color: #f6f7fb;
+    background-color: #f4f6fb;
 }
 
 .hero {
-    padding: 35px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    padding: 40px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #141E30, #243B55);
     color: white;
     margin-bottom: 30px;
     text-align: center;
 }
 
 .hero h1 {
-    font-size: 44px;
+    font-size: 46px;
     font-weight: 800;
     margin-bottom: 10px;
 }
@@ -39,29 +39,33 @@ body {
 }
 
 .card {
-    background: white;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(8px);
     padding: 25px;
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
     margin-bottom: 25px;
 }
 
 .kpi {
+    padding: 25px;
+    border-radius: 18px;
+    color: white;
     text-align: center;
-    padding: 20px;
-    border-radius: 16px;
-    background: #f9fafc;
-    box-shadow: inset 0 0 0 1px #eee;
+    font-weight: 700;
 }
 
+.kpi-positive { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.kpi-neutral  { background: linear-gradient(135deg, #757F9A, #D7DDE8); color: #222; }
+.kpi-negative { background: linear-gradient(135deg, #cb2d3e, #ef473a); }
+
 .kpi h2 {
-    font-size: 34px;
+    font-size: 36px;
     margin: 0;
 }
 
 .kpi p {
-    margin: 5px 0 0;
-    font-weight: 600;
+    margin-top: 6px;
 }
 
 .card-title {
@@ -85,19 +89,19 @@ body {
 """, unsafe_allow_html=True)
 
 # ---------------- Sidebar ----------------
-st.sidebar.markdown('<div class="sidebar-title"> YouTube Analyzer</div>', unsafe_allow_html=True)
-
+st.sidebar.markdown('<div class="sidebar-title">🎥 YouTube Analyzer</div>', unsafe_allow_html=True)
+st.sidebar.markdown("Analyze audience emotions using **AI-powered NLP**")
 st.sidebar.markdown("---")
 
 video_url = st.sidebar.text_input("🔗 YouTube Video URL")
 max_comments = st.sidebar.slider("💬 Number of Comments", 20, 200, 100)
 analyze_btn = st.sidebar.button("🚀 Analyze Now")
 
-# ---------------- Hero Header (CENTERED) ----------------
+# ---------------- Hero ----------------
 st.markdown("""
 <div class="hero">
     <h1>📊 YouTube Sentiment Analyzer</h1>
-    <p>Understand how people really feel about a video using Natural Language Processing.</p>
+    <p>Understand how people really feel about a video using Natural Language Processing</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -106,7 +110,6 @@ if analyze_btn:
     if video_url.strip() == "":
         st.error("❌ Please enter a valid YouTube URL")
     else:
-        progress = st.progress(0)
         with st.spinner("🔍 Fetching comments & analyzing sentiment..."):
             comments = get_comments(video_url, max_comments)
 
@@ -114,15 +117,12 @@ if analyze_btn:
             categorized_comments = {"Positive": [], "Neutral": [], "Negative": []}
             data = []
 
-            for i, comment in enumerate(comments):
+            for comment in comments:
                 cleaned = clean_text(comment)
                 sentiment = analyze_sentiment(cleaned)
-
                 results[sentiment] += 1
                 categorized_comments[sentiment].append(comment)
                 data.append({"Comment": comment, "Sentiment": sentiment})
-
-                progress.progress((i + 1) / len(comments))
 
         st.success("✅ Analysis Completed Successfully")
 
@@ -130,38 +130,33 @@ if analyze_btn:
         c1, c2, c3 = st.columns(3)
 
         c1.markdown(f"""
-        <div class="kpi">
+        <div class="kpi kpi-positive">
             <h2>😊 {results['Positive']}</h2>
             <p>Positive</p>
         </div>
         """, unsafe_allow_html=True)
 
         c2.markdown(f"""
-        <div class="kpi">
+        <div class="kpi kpi-neutral">
             <h2>😐 {results['Neutral']}</h2>
             <p>Neutral</p>
         </div>
         """, unsafe_allow_html=True)
 
         c3.markdown(f"""
-        <div class="kpi">
+        <div class="kpi kpi-negative">
             <h2>😠 {results['Negative']}</h2>
             <p>Negative</p>
         </div>
         """, unsafe_allow_html=True)
 
-        # ---------------- Overall Verdict ----------------
+        # ---------------- Insight ----------------
         overall = max(results, key=results.get)
-        verdict = {
-            "Positive": "🎉 Overall audience sentiment is **Positive**",
-            "Neutral": "🙂 Overall audience sentiment is **Neutral**",
-            "Negative": "⚠️ Overall audience sentiment is **Negative**"
-        }
-        st.info(verdict[overall])
+        st.info(f"📌 **Overall Audience Sentiment:** {overall}")
 
-        # ---------------- Visualization ----------------
+        # ---------------- Charts ----------------
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title">📊 Sentiment Visualization</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-title">📊 Sentiment Distribution</div>', unsafe_allow_html=True)
 
         sentiment_df = pd.DataFrame({
             "Sentiment": results.keys(),
@@ -171,13 +166,13 @@ if analyze_btn:
         col1, col2 = st.columns(2)
 
         with col1:
-            fig_bar, ax = plt.subplots(figsize=(4.5, 3.5))
-            ax.bar(sentiment_df["Sentiment"], sentiment_df["Count"])
-            ax.set_title("Sentiment Count")
-            st.pyplot(fig_bar)
+            fig1, ax1 = plt.subplots(figsize=(4.8, 4))
+            ax1.bar(sentiment_df["Sentiment"], sentiment_df["Count"])
+            ax1.set_title("Bar Chart")
+            st.pyplot(fig1)
 
         with col2:
-            fig_pie, ax2 = plt.subplots(figsize=(4.5, 3.5))
+            fig2, ax2 = plt.subplots(figsize=(4.8, 4))
             ax2.pie(
                 sentiment_df["Count"],
                 labels=sentiment_df["Sentiment"],
@@ -185,7 +180,7 @@ if analyze_btn:
                 startangle=90
             )
             ax2.axis("equal")
-            st.pyplot(fig_pie)
+            st.pyplot(fig2)
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -215,7 +210,7 @@ if analyze_btn:
 
         df = pd.DataFrame(data)
         st.download_button(
-            "📥 Download CSV",
+            "Download CSV",
             df.to_csv(index=False).encode("utf-8"),
             "youtube_sentiment_results.csv",
             "text/csv"
@@ -227,6 +222,6 @@ if analyze_btn:
 st.markdown("""
 <div class="footer">
 Built with ❤️ using <b>Python • NLP • Streamlit</b><br>
-Designed for real-world sentiment insights
+Portfolio-ready Sentiment Analysis Dashboard
 </div>
 """, unsafe_allow_html=True)
