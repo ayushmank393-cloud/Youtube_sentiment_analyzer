@@ -1,74 +1,34 @@
 📊 YouTube Sentiment Analyzer
 
-A Python-based web application that analyzes and visualizes the sentiment of YouTube video comments.
-This project demonstrates YouTube API integration, Natural Language Processing (NLP), and interactive data visualization using Streamlit.
+A simple Python web app that analyzes the sentiment of YouTube video comments using NLP and Streamlit.
 
 🚀 Features
 
-🔗 YouTube API Integration
-Fetches real-time comments using YouTube Data API v3
-
-🧠 Sentiment Analysis (NLP)
-Classifies comments into Positive, Neutral, and Negative using VADER (NLTK)
-
-📊 Interactive Dashboard
-User-friendly interface built with Streamlit
-
-📈 Visualizations
-Displays sentiment distribution using bar charts and pie charts
-
-⬇️ CSV Export
-Download analyzed comments and sentiment results
+Fetches comments using YouTube Data API v3
+Classifies comments as Positive, Neutral, or Negative
+Interactive dashboard with charts
+Download results as CSV
 
 🛠️ Tech Stack
 
 Python
-
 Streamlit
+NLTK (VADER)
+Pandas
+Matplotlib
 
-YouTube Data API v3
-
-NLTK (VADER Sentiment Analyzer)
-
-⚙️ Installation & Setup
-1️⃣ Clone the Repository
+⚙️ How to Run
 git clone https://github.com/your-username/youtube-sentiment-analyzer.git
 cd youtube-sentiment-analyzer
-
-2️⃣ Create a Virtual Environment (Recommended)
-python -m venv venv
-source venv/bin/activate      # macOS / Linux
-venv\Scripts\activate         # Windows
-
-3️⃣ Install Dependencies
 pip install -r requirements.txt
+python -m streamlit run app.py
 
-4️⃣ Download NLTK VADER Lexicon
-import nltk
-nltk.download('vader_lexicon')
+🔑 API Key
 
-🔑 YouTube API Setup
+Set your YouTube API key as an environment variable:
 
-Go to Google Cloud Console
+Windows
+set YOUTUBE_API_KEY=your_api_key_here
 
-Create a new project
-
-Enable YouTube Data API v3
-
-Generate an API key
-
-Set the API key as an environment variable:
-
-set YOUTUBE_API_KEY=your_api_key_here        # Windows
-export YOUTUBE_API_KEY=your_api_key_here     # macOS / Linux
-
-▶️ Run the Application
-streamlit run app.py
-
-
-Then open:
-http://localhost:8501
-
-Pandas
-
-Matplotlib
+macOS / Linux
+export YOUTUBE_API_KEY=your_api_key_here
