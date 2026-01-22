@@ -2,13 +2,13 @@ import re
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
-# Download VADER lexicon only once
+# ---------------- Download VADER Lexicon ----------------
 try:
     nltk.data.find("sentiment/vader_lexicon")
 except LookupError:
     nltk.download("vader_lexicon")
 
-# Initialize analyzer
+# ---------------- Initialize Analyzer ----------------
 sia = SentimentIntensityAnalyzer()
 
 
@@ -17,8 +17,12 @@ def clean_text(text: str) -> str:
     Cleans input text by:
     - Lowercasing
     - Removing URLs
-    - Removing special characters and numbers
+    - Removing numbers and special characters
+    - Removing extra spaces
     """
+    if not isinstance(text, str):
+        return ""
+
     text = text.lower()
     text = re.sub(r"http\S+|www\S+", "", text)
     text = re.sub(r"[^a-z\s]", "", text)
@@ -28,8 +32,7 @@ def clean_text(text: str) -> str:
 
 def analyze_sentiment(text: str) -> str:
     """
-    Analyzes sentiment using VADER compound score
-    Returns: Positive, Neutral, or Negative
+    Returns sentiment label only (for backward compatibility)
     """
     score = sia.polarity_scores(text)["compound"]
 
@@ -39,3 +42,24 @@ def analyze_sentiment(text: str) -> str:
         return "Negative"
     else:
         return "Neutral"
+
+
+def analyze_sentiment_with_score(text: str) -> dict:
+    """
+    Returns sentiment + confidence score
+    """
+    scores = sia.polarity_scores(text)
+    compound = scores["compound"]
+
+    if compound >= 0.05:
+        sentiment = "Positive"
+    elif compound <= -0.05:
+        sentiment = "Negative"
+    else:
+        sentiment = "Neutral"
+
+    return {
+        "sentiment": sentiment,
+        "confidence": round(abs(compound), 3),
+        "scores": scores
+    }
